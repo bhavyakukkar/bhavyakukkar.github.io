@@ -1,0 +1,22 @@
+{
+  "name": "bhavyakukkar.github.io",
+  "entrypoint": "./src/main.js",
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "6"
+  },
+  "scripts": {
+    "build": "npm run build-app && npm run build-static && npm run run && npm run pack",
+    "make-build": "make build",
+
+    "build-app": "tsc -p tsconfig.json",
+    "make-build-app": "make build-app",
+    "build-static": "tsc -p tsconfig.static.json",
+    "make-build-static": "make build-static",
+
+    "run": "node src/main.js static/index.template.html dist/index.html",
+    "make-run": "make run",
+    "pack": "cp styles.css dist/ && npm run run",
+    "make-pack": "make pack"
+  }
+}

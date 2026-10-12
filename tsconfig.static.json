@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "rootDir": "./static",
+    "outDir": "dist",
+    "strict": true
+  },
+  "include": ["static/*"]
+}

@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+}
+
+body > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+body > div > div.btm {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  flex: 1;
+}
+
+body > div > div.btm > div {
+  padding: 5px;
+}
+
+body > div > div.btm > div.left {
+  width: max-content;
+}
+
+body > div > div.btm > div.mid {
+  width: max-content;
+}
+
+body > div > div.btm > div.mid > div {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  height: 100%;
+}
+
+body > div > div.btm > div.mid > div > div {
+  grid-area: 1 / 1;
+}
+
+body > div > div.btm > div.right {
+  flex: 1;
+}
