@@ -97,8 +97,8 @@ const data = {
     'melodemon': new Category({}),
   } },
 
-  // games: {},
-  // blog: [{}],
+  games: new Category({}),
+  blog: new Category({}),
 } satisfies RootData;
 
 export default data;

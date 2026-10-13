@@ -18,6 +18,11 @@ function last(p: Path): string {
 function show(p: Path): string {
   return "/" + p.join("/");
 }
+function with_last(p: Path, last: string): Path {
+  if (p.length === 1)
+    return [last];
+  return [p[0], ...p.slice(1, -1), last];
+}
 
 type SiteCategory = { html: HTMLNode, entries: Map<Path, HTMLNode> };
 type Site = {
@@ -31,27 +36,26 @@ type Site = {
 // const entryHtml: Map<Path, HTMLNodeRepr> = new Map();
 // const entryHtml: HTMLNodeRepr = { tag: "div", args: [], body: [] };
 
-function renderData<C>(
-  d: Data<C>,
+function renderDataOfCategories(
+  d: Data,
   path: Path,
   collapsed: boolean,
-  render_c: (c: C, path: Path) => void,
-  is_c: (v: unknown) => v is C,
-): HTMLNode {
+  storeCategory: (sc: SiteCategory, path: Path) => void,
+) {
   const maybe_category = category_of_data(d);
   if (maybe_category) {
-    render_c(maybe_category, path);
+    storeCategory(renderCategory(maybe_category, path), path);
   }
 
   const children = Object.entries(children_of_data(d))
     .map(([k, v]) => {
       const new_path: Path = [...path, k];
 
-      if (is_c(v)) {
-        render_c(v, new_path);
+      if (v instanceof Category) {
+        storeCategory(renderCategory(v, new_path), new_path);
         return <li><a href={show(new_path)}>{ k }</a></li>;
       } else {
-        return <li>{renderData(v.$, new_path, !!v.collapsed, render_c, is_c)}</li>;
+        return <li>{renderDataOfCategories(v.$, new_path, !!v.collapsed, storeCategory)}</li>;
       }
     });
 
@@ -70,34 +74,55 @@ function renderData<C>(
   </details>;
 }
 
-function renderDataOfCategories(
-  d: Data,
-  path: Path,
-  collapsed: boolean,
-  storeCategory: (sc: SiteCategory, path: Path) => void,
-) {
-  return renderData<Category>(
-    d,
-    path,
-    collapsed,
-    (c, path) => storeCategory(renderCategory(c, path), path),
-    v => v instanceof Category,
-  );
-}
-
 function renderDataOfEntries(
   d: Data<Entry>,
+  category_path: Path,
   path: Path,
   collapsed: boolean,
   storeEntry: (sc: HTMLNode, path: Path) => void,
 ) {
-  return renderData<Entry>(
-    d,
-    path,
-    collapsed,
-    (c, path) => storeEntry(renderEntry(c, path), path),
-    v => v instanceof Entry,
-  );
+  const maybe_category = category_of_data(d);
+  if (maybe_category) {
+    storeEntry(renderEntry(maybe_category), path);
+  }
+
+  const children = Object.entries(children_of_data(d))
+    .map(([k, v]) => {
+      const new_path: Path = [...path, k];
+
+      if (v instanceof Entry) {
+        storeEntry(renderEntry(v), new_path);
+        return <li>
+          <a href={show([
+            ...category_path,
+            ":",
+            ...with_last(new_path, last(new_path) + ".html"),
+          ])}>
+            { k }
+          </a>
+        </li>;
+      } else {
+        return <li>{renderDataOfEntries(v.$, category_path, new_path, !!v.collapsed, storeEntry)}</li>;
+      }
+    });
+
+  return <details open={collapsed ? undefined : null}>
+    <summary>{
+      maybe_category ? (
+        <a href={show([
+          ...category_path,
+          ":",
+          ...with_last(path, last(path) + ".html"),
+        ])}>
+          {last(path)}
+        </a>
+      ) : (
+        new HTMLText(last(path))
+      )
+    }</summary>
+
+    <ul>{ children }</ul>
+  </details>;
 }
 
 function renderRootData(rd: RootData): Site {
@@ -112,7 +137,7 @@ function renderRootData(rd: RootData): Site {
 
       if (v instanceof Category) {
         site.categories.set(path, renderCategory(v, path));
-        site.root.body.push(<li><button>{k}</button></li>);
+        site.root.body.push(<li><a href={show(path)}>{k}</a></li>);
       } else {
         site.root.body.push(<li>{renderDataOfCategories(
           v.$,
@@ -132,14 +157,15 @@ function renderCategory(c: Category, path: Path): SiteCategory {
   const children = Object.entries(c.inner)
     .map(([k, v]) => {
       if (v instanceof Entry) {
-        entries.set([...path, ":", k], renderEntry(v, [...path, k]));
-        return <li><button>{k}</button></li>;
+        entries.set([k], renderEntry(v));
+        return <li><a href={show([...path, ":", k + ".html"])}>{k}</a></li>;
       } else {
         return <li>{renderDataOfEntries(
           v.$,
+          path,
           [k],
           !!v.collapsed,
-          (e, entry_path) => entries.set([...path, ":", ...entry_path], e),
+          (e, entry_path) => entries.set(entry_path, e),
         )}</li>;
       }
     });
@@ -147,7 +173,7 @@ function renderCategory(c: Category, path: Path): SiteCategory {
   return { html: <ul>{ children }</ul>, entries };
 }
 
-function renderEntry(c: Entry, path: Path): HTMLNode {
+function renderEntry(c: Entry): HTMLNode {
   return <div>
     {opt(!!c.inner.summary && <p>{ c.inner.summary }</p>)}
     {c.inner.content instanceof HTMLFile
@@ -194,8 +220,13 @@ function writeSite(
       const entry_filepath: Path = [...entry_path];
       entry_filepath[entry_filepath.length - 1] = last(entry_filepath) + ".html";
 
-      console.log("entry: ", path.join(out_dir, ...category_path, ...entry_filepath));
-      writeFile(path.join(out_dir, ...category_path, ...entry_filepath), write => {
+      console.log("entry: ", path.join(
+        out_dir,
+        ...category_path,
+        ":",
+        ...with_last(entry_path, last(entry_path) + ".html"),
+      ));
+      writeFile(path.join(out_dir, ...category_path, ":", ...entry_filepath), write => {
         template_factory().run({
           categories: root_html,
           entries: category,
