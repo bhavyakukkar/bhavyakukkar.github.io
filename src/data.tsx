@@ -18,8 +18,14 @@ function BandcampTrackEntry({album_id, track_id}: {album_id: number, track_id: n
 // CODE
 const code: Data<Category> = {
   kast: new Category({
-    json: new Entry({
+    'kast-json': new Entry({
       summary: "A JSON library for Kast",
+      content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
+    }),
+  }),
+  rust: new Category({
+    'json.rs': new Entry({
+      summary: "A JSON library for Rust",
       content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
     }),
   }),
@@ -51,6 +57,35 @@ const brainworm_resin_pendant = () => {
     }
   ] satisfies Data<Entry>;
 }
+
+/*
+
+{
+  code => {
+    code/:/kast-json: <html>
+    code/:/rust-json: <html>
+  }
+  code/kast => {
+    code/kast/:/json: <html>
+  }
+  code/rust => {
+    code/rust/:/json: <html>
+  }
+}
+
+# categories
+index.html
+
+# categories + entries
+code/index.html
+code/kast/index.html
+code/rust/index.html
+
+# categories + entries + entry
+code/kast/json.html
+code/rust/json.html
+
+*/
 
 const data = {
   code: { collapsed: false, $: [all_code_lang_entries, code] },

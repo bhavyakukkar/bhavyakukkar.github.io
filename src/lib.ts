@@ -1,5 +1,6 @@
-import { close, open, openSync, readFileSync, ReadFileSyncOptionsWithStringEncoding, writeFileSync } from "node:fs";
+import { close, mkdirSync, open, openSync, readFileSync, ReadFileSyncOptionsWithStringEncoding, writeFileSync } from "node:fs";
 import { write_attrib, HTMLAttrib, HTMLChild, HTMLNode, HTMLText, html_node } from "./jsx";
+import path from "node:path";
 
 export type Update<T> = (old: T) => T;
 
@@ -66,6 +67,7 @@ export function readFile(
 }
 
 export function writeFile(filename: string, f: (write: (s: string) => void) => void): void {
+  mkdirSync(path.dirname(filename), { recursive: true });
   const fd = openSync(filename, "w");
   f(s => writeFileSync(fd, s));
   close(fd);

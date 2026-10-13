@@ -1,15 +1,16 @@
+import { HTMLChild } from "./jsx";
 import { Struct } from "./lib";
 
-export class InterpolatedPart extends Struct<string> { }
+export class InterpolatedPart<S extends string> extends Struct<S> { }
 
-export class Template {
+export class Template<Inputs extends {[k in string]: HTMLChild}> {
   private s: string;
 
   constructor(s: string) {
     this.s = s;
   }
 
-  next(): string | InterpolatedPart | null {
+  next(): string | InterpolatedPart<Extract<keyof Inputs, string>> | null {
     if (this.s === "") {
       return null;
     }
@@ -27,10 +28,10 @@ export class Template {
         throw Error("unrechable");
       }
 
-      const td = new InterpolatedPart(
-        end_interpolation === 2
+      const td = new InterpolatedPart<Extract<keyof Inputs, string>>(
+        (end_interpolation === 2
           ? ""
-          : this.s.substring(2, end_interpolation - 1),
+          : this.s.substring(2, end_interpolation - 1).trim()) as any,
       );
       this.s = this.s.substring(end_interpolation + 2);
       return td;
@@ -40,5 +41,21 @@ export class Template {
       return s;
     }
   }
+
+  run(inputs: Inputs): (w: (s: string) => void) => void {
+    return write => {
+      while (true) {
+        const part = this.next();
+        if (part instanceof InterpolatedPart) {
+          const html = inputs[part.inner]!;
+          write(html.content);
+        } else if (part === null) {
+          break;
+        } else {
+          write(part);
+        }
+      }
+    }
+  };
 }
 
