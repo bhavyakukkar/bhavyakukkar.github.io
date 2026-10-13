@@ -7,6 +7,7 @@
   },
   "scripts": {
     "build": "npm run build-app && npm run build-static && npm run run && npm run pack",
+    "pack": "cp static/styles.css dist/ && cp static/index.js dist/",
     "make-build": "make build",
 
     "build-app": "tsc -p tsconfig.json",
@@ -14,9 +15,7 @@
     "build-static": "tsc -p tsconfig.static.json",
     "make-build-static": "make build-static",
 
-    "run": "node src/main.js static/index.template.html dist/index.html",
-    "make-run": "make run",
-    "pack": "cp styles.css dist/ && npm run run",
-    "make-pack": "make pack"
+    "run": "node src/main.js static/index.template.html dist",
+    "make-run": "make run"
   }
 }

@@ -4,3 +4,7 @@ src/*.d.ts
 src/*.d.ts.map
 src/*.js
 src/*.js.map
+static/*.d.ts
+static/*.d.ts.map
+static/*.js
+static/*.js.map
