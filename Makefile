@@ -17,11 +17,15 @@ run: ${DIST}/index.html
 
 ## increments
 
-${DIST}: ${SRC}/main.js ${STATIC}/styles.css ${STATIC}/index.js ${STATIC}/index.template.html
+${DIST}: ${SRC}/main.js ${DIST}/styles.css ${DIST}/index.js ${STATIC}/index.template.html
 	mkdir -p ${DIST}
-	cp ${STATIC}/styles.css $@ # copy styles.css to dist/
-	cp ${STATIC}/index.js $@ # copy compiled index.js to dist/
 	IN=${STATIC}/index.template.html OUT=$@ node src/main.js # build website to dist/
+
+${DIST}/styles.css: ${STATIC}/styles.css
+	cp $< $@ # copy styles.css to dist/
+
+${DIST}/index.js: ${STATIC}/index.js
+	cp $< $@ # copy compiled index.js to dist/
 
 ${STATIC}/index.js: ${STATIC}/index.ts tsconfig.static.json
 	${TSC} -p tsconfig.static.json
