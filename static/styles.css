@@ -1,5 +1,46 @@
+:root {
+  /* gruvbox: https://github.com/morhetz/gruvbox#dark-mode-1 */
+  --bg: #282828;
+  --fg: #ebdbb2;
+  --blue: #458588;
+  --purple: #b16286;
+  --gray: #928374;
+
+  --bg2: #504945;
+  --fg2: #d5c4a1;
+  --fg3: #bdae93;
+  --fg4: #a89984;
+  --blue2: #83a598;
+  --purple2: #d3869b
+}
+
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  padding: 1rem;
+  font-size: 1.3rem;
+}
+
+a {
+  color: var(--blue2);
+  text-decoration-color: color-mix(in srgb, currentColor 15%, transparent);
+}
+a:visited {
+  color: var(--purple2);
+  text-decoration-color: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+h2, h3 {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  font-weight: normal;
+}
+h2 {
+  text-decoration: underline;
+}
+h3 {
+  color: var(--fg3);
 }
 
 body > div {
@@ -8,7 +49,15 @@ body > div {
   justify-content: stretch;
 }
 
+body > div > div.top {
+  border: 1px solid var(--bg2);
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
 body > div > div.btm {
+  border: 1px solid var(--bg2);
+  padding: 1rem;
   display: flex;
   flex-direction: row;
   justify-content: stretch;
@@ -19,18 +68,35 @@ body > div > div.btm > div {
   padding: 5px;
 }
 
+body > div > div.btm > div {
+  /* border-left: 1px solid var(--bg2); */
+}
+
+body > div > div.btm > div:is(.left, .mid) {
+  border-right: 1px solid var(--bg2);
+  color: var(--fg3);
+}
 body > div > div.btm > div.left {
-  width: max-content;
+  width: 300px;
 }
 
 body > div > div.btm > div.mid {
-  width: max-content;
+  width: 450px;
 }
 
-body > div > div.btm > div.mid > div {
-  display: inline-grid;
-  grid-template-columns: max-content;
-  height: 100%;
+/* "(click to expand)" */
+body > div > div.btm > div:is(.left, .mid) details summary span::after {
+  content: " click to expand";
+  color: var(--bg2);
+  font-size: 0.8em;
+}
+body > div > div.btm > div:is(.left, .mid) details:open summary span::after {
+  content: " click to fold";
+  color: var(--bg2);
+  font-size: 0.8em;
+}
+body > div > div.btm > div:is(.left, .mid) details summary span:hover::after {
+  cursor: pointer;
 }
 
 body > div > div.btm > div.mid > div > div {
@@ -38,5 +104,6 @@ body > div > div.btm > div.mid > div > div {
 }
 
 body > div > div.btm > div.right {
+  margin-left: 1rem;
   flex: 1;
 }
