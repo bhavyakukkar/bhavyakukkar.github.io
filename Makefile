@@ -17,8 +17,7 @@ run: ${DIST}/index.html
 
 ## increments
 
-${DIST}: ${SRC}/main.js ${DIST}/styles.css ${DIST}/index.js ${STATIC}/index.template.html
-	mkdir -p ${DIST}
+${DIST}: ${DIST}/styles.css ${DIST}/index.js ${SRC}/main.js ${STATIC}/index.template.html
 	IN=${STATIC}/index.template.html OUT=$@ node src/main.js # build website to dist/
 
 ${DIST}/styles.css: ${STATIC}/styles.css

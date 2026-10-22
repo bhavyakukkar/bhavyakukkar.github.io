@@ -60,7 +60,7 @@ function renderDataOfCategories(
     });
 
   return <details open={collapsed ? undefined : null}>
-    <summary>{
+    <summary><span>{
       maybe_category ? (
         <a href={show(path)}>
           {last(path)}
@@ -68,7 +68,7 @@ function renderDataOfCategories(
       ) : (
         new HTMLText(last(path))
       )
-    }</summary>
+    }</span></summary>
 
     <ul>{ children }</ul>
   </details>;
@@ -107,7 +107,7 @@ function renderDataOfEntries(
     });
 
   return <details open={collapsed ? undefined : null}>
-    <summary>{
+    <summary><span>{
       maybe_category ? (
         <a href={show([
           ...category_path,
@@ -119,7 +119,7 @@ function renderDataOfEntries(
       ) : (
         new HTMLText(last(path))
       )
-    }</summary>
+    }</span></summary>
 
     <ul>{ children }</ul>
   </details>;
