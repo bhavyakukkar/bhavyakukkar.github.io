@@ -7,6 +7,7 @@ STATIC ?= static
 # select typescript files (.ts) without selecting typescript definition files (.d.ts)
 TS_SOURCES := $(filter-out %.d.ts,$(wildcard ${SRC}/*.ts))
 
+
 ## commands (mirroring package.json scripts)
 
 build: ${DIST}
