@@ -22,9 +22,11 @@ ${DIST}: ${DIST}/styles.css ${DIST}/index.js ${SRC}/main.js ${STATIC}/index.temp
 	IN=${STATIC}/index.template.html OUT=$@ node src/main.js # build website to dist/
 
 ${DIST}/styles.css: ${STATIC}/styles.css
+	mkdir -p dist
 	cp $< $@ # copy styles.css to dist/
 
 ${DIST}/index.js: ${STATIC}/index.js
+	mkdir -p dist
 	cp $< $@ # copy compiled index.js to dist/
 
 ${STATIC}/index.js: ${STATIC}/index.ts tsconfig.static.json
