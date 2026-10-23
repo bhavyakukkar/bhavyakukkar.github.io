@@ -188,10 +188,16 @@ type TemplateInputs = {
   entry: HTMLChild,
 };
 
+type SiteConfig = {
+  no_entry_selected_content?: HTMLChild,
+  no_category_selected_content?: HTMLChild,
+};
+
 function writeSite(
   site: Site,
   out_dir: string,
   template_factory: () => Template<TemplateInputs>,
+  config: SiteConfig = {},
 ) {
   const root_html = html_node(site.root.tag, site.root.args, site.root.body);
 
@@ -199,8 +205,8 @@ function writeSite(
   writeFile(path.join(out_dir, "index.html"), write => {
     template_factory().run({
       categories: root_html,
-      entries: <p>No category selected</p>,
-      entry: <p>No entry selected</p>,
+      entries: config.no_category_selected_content ?? <p>No category selected</p>,
+      entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
     })(write);
   });
 
@@ -211,7 +217,7 @@ function writeSite(
       template_factory().run({
         categories: root_html,
         entries: category,
-        entry: <p>No entry selected</p>,
+        entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
       })(write);
     });
 
@@ -255,6 +261,9 @@ writeSite(
   site,
   out_dir,
   () => new Template<TemplateInputs>(readFile(input_filename)),
+  {
+    no_category_selected_content: <p style="padding-left: 1em;">No category selected</p>
+  }
 );
 
 /* const t = new Template(readFile(input_filename));
