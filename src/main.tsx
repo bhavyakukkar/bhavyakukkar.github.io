@@ -60,15 +60,15 @@ function renderDataOfCategories(
     });
 
   return <details open={collapsed ? undefined : null}>
-    <summary><span>{
+    <summary>{
       maybe_category ? (
-        <a href={show(path)}>
+        <span><a href={show(path)}>
           {last(path)}
-        </a>
+        </a></span>
       ) : (
-        new HTMLText(last(path))
+        <span>{new HTMLText(last(path))}</span>
       )
-    }</span></summary>
+    }</summary>
 
     <ul>{ children }</ul>
   </details>;
@@ -93,13 +93,16 @@ function renderDataOfEntries(
       if (v instanceof Entry) {
         storeEntry(renderEntry(v), new_path);
         return <li>
-          <a href={show([
-            ...category_path,
-            ":",
-            ...with_last(new_path, last(new_path) + ".html"),
-          ])}>
-            { k }
-          </a>
+          <div class="entry">
+            <span><a href={show([
+              ...category_path,
+              ":",
+              ...with_last(new_path, last(new_path) + ".html"),
+            ])}>
+              { k }
+            </a></span>
+            <span>{opt(!!v.inner.summary && <p>{ v.inner.summary }</p>)}</span>
+          </div>
         </li>;
       } else {
         return <li>{renderDataOfEntries(v.$, category_path, new_path, !!v.collapsed, storeEntry)}</li>;
@@ -107,19 +110,24 @@ function renderDataOfEntries(
     });
 
   return <details open={collapsed ? undefined : null}>
-    <summary><span>{
+    <summary>{
       maybe_category ? (
-        <a href={show([
-          ...category_path,
-          ":",
-          ...with_last(path, last(path) + ".html"),
-        ])}>
-          {last(path)}
-        </a>
+        <div class="entry">
+          <span><a href={show([
+            ...category_path,
+            ":",
+            ...with_last(path, last(path) + ".html"),
+          ])}>
+            {last(path)}
+          </a></span>
+          <span>
+            {opt(!!maybe_category.inner.summary && <p>{ maybe_category.inner.summary }</p>)}
+          </span>
+        </div>
       ) : (
-        new HTMLText(last(path))
+        <span>{new HTMLText(last(path))}</span>
       )
-    }</span></summary>
+    }</summary>
 
     <ul>{ children }</ul>
   </details>;
@@ -158,7 +166,10 @@ function renderCategory(c: Category, path: Path): SiteCategory {
     .map(([k, v]) => {
       if (v instanceof Entry) {
         entries.set([k], renderEntry(v));
-        return <li><a href={show([...path, ":", k + ".html"])}>{k}</a></li>;
+        return <li><div class="entry">
+          <span><a href={show([...path, ":", k + ".html"])}>{k}</a></span>
+          <span>{opt(!!v.inner.summary && <p>{ v.inner.summary }</p>)}</span>
+        </div></li>;
       } else {
         return <li>{renderDataOfEntries(
           v.$,
@@ -175,7 +186,6 @@ function renderCategory(c: Category, path: Path): SiteCategory {
 
 function renderEntry(c: Entry): HTMLNode {
   return <div>
-    {opt(!!c.inner.summary && <p>{ c.inner.summary }</p>)}
     {c.inner.content instanceof HTMLFile
       ? new HTMLNode(readFile(c.inner.content.inner, {encoding: 'ascii'}))
       : c.inner.content}

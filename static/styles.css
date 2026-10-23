@@ -85,22 +85,36 @@ body > div > div.btm > div.mid {
 }
 
 /* "(click to expand)" */
-body > div > div.btm > div:is(.left, .mid) details summary span::after {
+body > div > div.btm > div:is(.left, .mid) details > summary span::after {
   content: " click to expand";
   color: var(--bg2);
   font-size: 0.8em;
 }
-body > div > div.btm > div:is(.left, .mid) details:open summary span::after {
+body > div > div.btm > div:is(.left, .mid) details:open > summary span::after {
   content: " click to fold";
   color: var(--bg2);
   font-size: 0.8em;
 }
-body > div > div.btm > div:is(.left, .mid) details summary span:hover::after {
+body > div > div.btm > div:is(.left, .mid) details > summary span:hover::after {
   cursor: pointer;
 }
 
 body > div > div.btm > div.mid > div > div {
   grid-area: 1 / 1;
+}
+
+/* body > div > div.btm > div.mid .entry {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+} */
+body > div > div.btm > div.mid .entry > span:not(:first-child) {
+  font-size: 0.7em;
+}
+body > div > div.btm > div.mid .entry > span:not(:first-child) p {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 body > div > div.btm > div.right {
