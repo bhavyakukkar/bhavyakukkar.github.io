@@ -62,11 +62,19 @@ function renderDataOfCategories(
   return <details open={collapsed ? undefined : null}>
     <summary>{
       maybe_category ? (
-        <span><a href={show(path)}>
-          {last(path)}
-        </a></span>
+        <div>
+          <span><a href={show(path)}>
+            {last(path)}
+          </a></span>
+
+          <span class="item-summary">
+            {opt(!!maybe_category.inner.summary && <p>{ maybe_category.inner.summary }</p>)}
+          </span>
+        </div>
       ) : (
-        <span>{new HTMLText(last(path))}</span>
+        <div>
+          <span>{new HTMLText(last(path))}</span>
+        </div>
       )
     }</summary>
 
@@ -81,9 +89,9 @@ function renderDataOfEntries(
   collapsed: boolean,
   storeEntry: (sc: HTMLNode, path: Path) => void,
 ) {
-  const maybe_category = category_of_data(d);
-  if (maybe_category) {
-    storeEntry(renderEntry(maybe_category), path);
+  const maybe_entry = category_of_data(d);
+  if (maybe_entry) {
+    storeEntry(renderEntry(maybe_entry), path);
   }
 
   const children = Object.entries(children_of_data(d))
@@ -111,8 +119,8 @@ function renderDataOfEntries(
 
   return <details open={collapsed ? undefined : null}>
     <summary>{
-      maybe_category ? (
-        <div class="entry">
+      maybe_entry ? (
+        <div>
           <span><a href={show([
             ...category_path,
             ":",
@@ -120,12 +128,15 @@ function renderDataOfEntries(
           ])}>
             {last(path)}
           </a></span>
-          <span>
-            {opt(!!maybe_category.inner.summary && <p>{ maybe_category.inner.summary }</p>)}
+
+          <span class="item-summary">
+            {opt(!!maybe_entry.inner.summary && <p>{ maybe_entry.inner.summary }</p>)}
           </span>
         </div>
       ) : (
-        <span>{new HTMLText(last(path))}</span>
+        <div>
+          <span>{new HTMLText(last(path))}</span>
+        </div>
       )
     }</summary>
 
@@ -162,7 +173,7 @@ function renderRootData(rd: RootData): Site {
 function renderCategory(c: Category, path: Path): SiteCategory {
   const entries = new Map();
 
-  const children = Object.entries(c.inner)
+  const children = Object.entries(c.inner.$ || {})
     .map(([k, v]) => {
       if (v instanceof Entry) {
         entries.set([k], renderEntry(v));
