@@ -97,16 +97,67 @@ code/rust/json.html
 const data = {
   code: { collapsed: false, $: [all_code_lang_entries, code] },
 
+  games: new Category({
+    $: {
+      'Parentheses Drive Me Crazy': new Entry({
+        summary: "Game about using a car-gear to balance Lisp parentheses, made for the Spring Lisp game jam",
+        content: (
+          // thanks itch.io <3
+          <iframe width="552" height="167" frameborder="0" src="https://itch.io/embed/4607513">
+            <a href="https://nigelwithrow.itch.io/parentheses-drive-me-crazy">
+              Parentheses Drive Me Crazy by nigelwithrow
+            </a>
+          </iframe>
+        ),
+      }),
+
+      'catgirl live date': new Entry({
+        summary: "A live date between two catgirls that can chat and emote, made for the catgirl game jam",
+        content: (
+          <iframe width="552" height="167" frameborder="0" src="https://itch.io/embed/4556211">
+            <a href="https://accbsdinnyaa.itch.io/catgirl-live-date">
+              catgirl live date by accbsdinnyaa
+            </a>
+          </iframe>
+        ),
+      }),
+
+      'Tristet': new Entry({
+        summary: "A different kind of an iteration on the popular falling-block game, made for the falling-block game jam",
+        content: (
+          <iframe height="167" width="552" frameborder="0" src="https://itch.io/embed/3887768">
+            <a href="https://nigelwithrow.itch.io/tristet">
+              Tristet by nigelwithrow
+            </a>
+          </iframe>
+        )
+      }),
+
+      'Bonk to the Future': new Entry({
+        summary: "Game by ves about finding pieces to upgrade your Delorean, made for Ludum-Dare game jam 60",
+        content: (
+          <div>
+            <p>I did the music & audio for this game written in Kast</p>
+            <iframe height="167" width="552" frameborder="0" src="https://itch.io/embed/5190894">
+              <a href="https://vesdev.itch.io/bonk-to-the-future">
+                Bonk to the Future by ves, kuviman, nigelwithrow
+              </a>
+            </iframe>
+          </div>
+        ),
+      }),
+    }
+  }),
+
   music: { collapsed: false, $: {
-    'heather knife': new Category({
+    'heather-knife': new Category({
       $: {
-        'brainworm resin pendant': { collapsed: true, $: brainworm_resin_pendant() }, 
+        'brainworm-resin-pendant': { collapsed: true, $: brainworm_resin_pendant() }, 
       },
     }),
     'melodemon': new Category({}),
   } },
 
-  games: new Category({}),
   blog: new Category({}),
 } satisfies RootData;
 

@@ -137,6 +137,9 @@ body > div > div.btm > div {
   }
 }
 
+body > div > div.btm > div:is(.left, .mid) details > summary > div {
+  display: inline-block;
+}
 /* "(click to expand)" */
 body > div > div.btm > div:is(.left, .mid) details > summary > div > span:is(:first-child)::after {
   content: " click to expand";
@@ -174,7 +177,7 @@ body > div > div.btm > div.mid > div > div {
 
 body > div > div.btm > div.right {
   width: auto;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 @media (width >= 1250px) {
   body > div > div.btm > div.right {
