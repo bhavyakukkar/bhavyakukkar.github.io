@@ -11,14 +11,20 @@
   --fg3: #bdae93;
   --fg4: #a89984;
   --blue2: #83a598;
-  --purple2: #d3869b
+  --purple2: #d3869b;
+
+  --body-padding: 1rem;
+  --btm-padding: 1rem;
+  --category-list-width: 300px;
+  --entry-list-width: 450px;
+  --btm-gap: 1rem;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  padding: 1rem;
+  padding: var(--body-padding);
   font-size: 1.3rem;
 }
 
@@ -56,16 +62,17 @@ body > div > div.top {
 }
 
 body > div > div.btm {
+  width: auto;
   border: 1px solid var(--bg2);
-  padding: 1rem;
+  padding: var(--btm-padding);
   display: grid;
   align-items: stretch;
   justify-items: stretch;
-  gap: 1rem;
+  gap: var(--btm-gap);
 }
 @media (width >= 1250px) {
   body > div > div.btm {
-    grid-template-columns: 300px 450px 1fr;
+    grid-template-columns: var(--category-list-width) var(--entry-list-width) auto;
     grid-template-rows: auto;
   }
 }
@@ -103,7 +110,7 @@ body > div > div.btm > div {
 @media (width >= 1250px) {
   body > div > div.btm > div.left {
     grid-column: 1;
-    width: 300px;
+    width: var(--category-list-width);
   }
 }
 @media (width < 1250px) {
@@ -111,14 +118,14 @@ body > div > div.btm > div {
     grid-column: 1;
     grid-row: 1;
     justify-self: center;
-    width: 300px;
+    width: var(--category-list-width);
   }
 }
 
 @media (width >= 1250px) {
   body > div > div.btm > div.mid {
     grid-column: 2;
-    width: 450px;
+    width: var(--entry-list-width);
   }
 }
 @media (width < 1250px) {
@@ -126,7 +133,7 @@ body > div > div.btm > div {
     grid-column: 2;
     grid-row: 1;
     justify-self: center;
-    width: 450px;
+    width: var(--entry-list-width);
   }
 }
 
@@ -165,6 +172,10 @@ body > div > div.btm > div.mid > div > div {
   margin-bottom: 0;
 }
 
+body > div > div.btm > div.right {
+  width: auto;
+  overflow-x: scroll;
+}
 @media (width >= 1250px) {
   body > div > div.btm > div.right {
     grid-column: 3;
