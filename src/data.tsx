@@ -17,19 +17,19 @@ function BandcampTrackEntry({album_id, track_id}: {album_id: number, track_id: n
 
 // CODE
 const code: Data<Category> = {
+  rust: new Category({
+    $: {
+      'pixylene': new Entry({
+        summary: "a pixel-art editor",
+        content: new HTMLFile("pages/pixylene.html"),
+      }),
+    },
+  }),
   kast: new Category({
     $: {
       'kast-json': new Entry({
         summary: "A JSON library for Kast",
-        content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
-      }),
-    },
-  }),
-  rust: new Category({
-    $: {
-      'json.rs': new Entry({
-        summary: "A JSON library for Rust",
-        content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
+        content: <a href="https://github.com/bhavyakukkar/kast-json">github</a>,
       }),
     },
   }),

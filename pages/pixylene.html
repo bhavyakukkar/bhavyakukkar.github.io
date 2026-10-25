@@ -1,0 +1,157 @@
+<div style="width: 100%;">
+  <a href="https://github.com/bhavyakukkar/pixylene">github</a>
+
+  <h1 id="pixylene">Pixylene</h1>
+  <p>An extensible pixel art editor.</p>
+  <p><strong>Notice:</strong> This application is still in very early
+  stages, lacks basic features, lacks a manual, and is generally very
+  not-fun to use. Please refer to this incomprehensible <a href=
+  "./notes.org">roadmap</a>.</p>
+  <p>Pixylene should run on Linux, Windows & MacOS but has only been
+  tested on Linux & Windows</p>
+  <h1 id="screenshot">Screenshot</h1>
+  <p><img style="width: 100%;" src="https://raw.githubusercontent.com/bhavyakukkar/pixylene/main/assets/screenshots/Screenshot.from.2024-07-15.at.23_23_26.910389678.png" alt="screenshot"></p>
+  <h1 id="prerequisites">Prerequisites</h1>
+  <ul>
+    <li>Cargo is required to manage dependencies</li>
+  </ul>
+  <h1 id="clone">Clone</h1>
+  <pre><code class="lang-sh">git <span class=
+  "hljs-keyword">clone</span> <span class=
+  "hljs-title">https</span>://github.com/bhavyakukkar/pixylene.git
+  cd pixylene
+  </code></pre>
+  <h1 id="build">Build</h1>
+  <p>There are 4 targets available:</p>
+  <pre><code class="lang-sh"># runs <span class=
+  "hljs-keyword">in</span> the terminal using `crossterm`
+  # preferred editor
+  make tui
+
+  # runs <span class=
+  "hljs-keyword">in</span> the browser <span class="hljs-keyword">in</span> the form <span class="hljs-keyword">of</span> `wasm`
+  make web
+
+  # runs <span class=
+  "hljs-keyword">in</span> a standalone window using `minifb`
+  make gui
+
+  # runs <span class="hljs-keyword">in</span> any stream
+  # preferred <span class=
+  "hljs-keyword">if</span> you want to pipe pixylene into some other program like ./examples/cli.py
+  make cli
+  </code></pre>
+  <ul>
+  <li>
+  <p>Lua can be enabled in any of the targets except Web by prefixing
+  the command like so:</p>
+  <pre><code class="lang-sh">LUA=<span class=
+  "hljs-keyword">lua</span> <span class=
+  "hljs-keyword">make</span> tui
+  LUA=<span class="hljs-keyword">lua</span> <span class=
+  "hljs-keyword">make</span> <span class="hljs-keyword">gui</span>
+  LUA=<span class="hljs-keyword">lua</span> <span class=
+  "hljs-keyword">make</span> cli
+  </code></pre></li>
+  <li>
+  <p><code>tui</code>, <code>gui</code> & <code>cli</code> will be
+  built to <code>target/release/</code> as pixylenetui, pixylenegui,
+  pixylenecli respectively</p>
+  </li>
+  <li><code>web</code> will be built and packaged right in
+  <code>pixylene-ui/</code> where it can be served using an HTTP/S
+  server
+  <pre><code class="lang-sh"><span class=
+  "hljs-keyword">cd</span> pixylene-ui
+  <span class="hljs-keyword">python</span> -<span class=
+  "hljs-keyword">m</span> http.server <span class=
+  "hljs-number">6969</span>
+  mybrowser localhos<span class="hljs-variable">t:6969</span>/
+  </code></pre></li>
+  </ul>
+  <h1 id="usage">Usage</h1>
+  <pre><code class="lang-sh"># start the editor
+  pixylenetui
+
+  # start <span class="hljs-keyword">with</span> a <span class=
+  "hljs-keyword">new</span> project <span class=
+  "hljs-keyword">with</span> <span class=
+  "hljs-keyword">default</span> dimensions <span class=
+  "hljs-keyword">and</span> <span class=
+  "hljs-keyword">true</span> canvas
+  pixylenetui <span class="hljs-keyword">new</span>
+
+  # start <span class="hljs-keyword">with</span> a <span class=
+  "hljs-keyword">new</span> project <span class=
+  "hljs-keyword">with</span> <span class=
+  "hljs-number">16</span>x16 <span class=
+  "hljs-keyword">true</span> canvas
+  pixylenetui <span class="hljs-keyword">new</span> <span class=
+  "hljs-number">16</span> <span class="hljs-number">16</span>
+
+  # start <span class="hljs-keyword">with</span> a <span class=
+  "hljs-keyword">new</span> project <span class=
+  "hljs-keyword">with</span> <span class=
+  "hljs-number">16</span>x16 indexed canvas
+  pixylenetui <span class="hljs-keyword">new</span> <span class=
+  "hljs-number">16</span> <span class="hljs-number">16</span> -i
+
+  # start <span class="hljs-keyword">with</span> a <span class=
+  "hljs-keyword">new</span> project <span class=
+  "hljs-keyword">from</span> a png
+  pixylenetui import test.png
+
+  # start <span class="hljs-keyword">with</span> a <span class=
+  "hljs-keyword">new</span> project <span class=
+  "hljs-keyword">from</span> a png downscaled <span class=
+  "hljs-keyword">to</span> <span class="hljs-number">32</span>x32
+  pixylenetui import test.png <span class=
+  "hljs-number">32</span> <span class="hljs-number">32</span>
+
+  # start <span class=
+  "hljs-keyword">with</span> a saved canvas file (plaintext)
+  pixylenetui canvas ~/canvas.json
+
+  # start <span class=
+  "hljs-keyword">with</span> a saved project file (binary)
+  pixylenetui project ~/project.pixylene
+  </code></pre>
+  <h1 id="configuration">Configuration</h1>
+  <p>Pixylene is configured in 2 different ways:</p>
+  <h2 id="custom-actions-lua-">Custom Actions [Lua]</h2>
+  <ul>
+  <li>Custom Actions can be written using Pixylene's Lua API.</li>
+  <li>The file containing these custom actions must be named
+  <code>actions.lua</code> and located in your platform-specific
+  <a href=
+  "https://docs.rs/dirs/latest/dirs/fn.config_dir.html">configuration
+  directory</a></li>
+  <li><a href="./pixylene-ui/src/std-actions.lua">Examples</a></li>
+  </ul>
+  <h3 id="build-lua-api-docs">Build Lua API Docs</h3>
+  <ul>
+  <li>
+  <p>The Lua reference API can be generated using <a href=
+  "https://github.com/lenscas/tealr_doc_gen">tealr_doc_gen</a>:</p>
+  <pre><code class="lang-sh"><span class=
+  "hljs-meta"># make sure tealr_doc_gen is installed globally</span>
+  <span class="hljs-meta">#cargo install tealr_doc_gen</span>
+  make lua-docs
+  </code></pre></li>
+  <li>
+  <p>The documentation pages will be built to
+  assets/docs/pixylene-lua/pages</p>
+  </li>
+  </ul>
+  <h2 id="static-editor-configuration-toml-">Static Editor
+  Configuration [TOML]</h2>
+  <ul>
+  <li>Static Configuration of the editor, including all keybindings &
+  modes, can be written in TOML.</li>
+  <li>The config file must be named <code>config.toml</code> and
+  located in your platform-specific <a href=
+  "https://docs.rs/dirs/latest/dirs/fn.config_dir.html">configuration
+  directory</a></li>
+  <li><a href="./examples/config.toml">Example</a></li>
+  </ul>
+</div>

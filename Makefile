@@ -14,11 +14,13 @@ build: ${DIST}
 build-app: ${SRC}/main.js
 build-static: ${DIST}/index.js
 run: ${DIST}/index.html
+watch:
+	cd dist && npx browser-sync start -w -f ./*
 
 
 ## increments
 
-${DIST}: ${DIST}/styles.css ${DIST}/index.js ${SRC}/main.js ${STATIC}/index.template.html
+${DIST}: ${DIST}/styles.css ${DIST}/index.js ${SRC}/main.js ${STATIC}/index.template.html pages/*
 	IN=${STATIC}/index.template.html OUT=$@ node src/main.js # build website to dist/
 
 ${DIST}/styles.css: ${STATIC}/styles.css
