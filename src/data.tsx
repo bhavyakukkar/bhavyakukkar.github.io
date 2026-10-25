@@ -18,22 +18,29 @@ function BandcampTrackEntry({album_id, track_id}: {album_id: number, track_id: n
 // CODE
 const code: Data<Category> = {
   kast: new Category({
-    'kast-json': new Entry({
-      summary: "A JSON library for Kast",
-      content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
-    }),
+    $: {
+      'kast-json': new Entry({
+        summary: "A JSON library for Kast",
+        content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
+      }),
+    },
   }),
   rust: new Category({
-    'json.rs': new Entry({
-      summary: "A JSON library for Rust",
-      content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
-    }),
+    $: {
+      'json.rs': new Entry({
+        summary: "A JSON library for Rust",
+        content: <a href="https://github.com/bhavyakukkar/kast-json" c={true}>github</a>,
+      }),
+    },
   }),
 };
 
 // Generate a single category listing projects (entries) from all programming-languages
 const all_code_lang_entries =
-  new Category(Object.fromEntries(Object.entries(code).flatMap(flatten1)));
+  new Category({
+    $: Object.fromEntries(Object.entries(code).flatMap(flatten1)),
+    summary: "projects from all langs",
+  });
 
 // MUSIC
 const brainworm_resin_pendant = () => {
@@ -92,7 +99,9 @@ const data = {
 
   music: { collapsed: false, $: {
     'heather knife': new Category({
-      'brainworm resin pendant': { collapsed: true, $: brainworm_resin_pendant() }, 
+      $: {
+        'brainworm resin pendant': { collapsed: true, $: brainworm_resin_pendant() }, 
+      },
     }),
     'melodemon': new Category({}),
   } },

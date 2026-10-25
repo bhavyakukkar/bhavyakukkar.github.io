@@ -58,10 +58,22 @@ body > div > div.top {
 body > div > div.btm {
   border: 1px solid var(--bg2);
   padding: 1rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: stretch;
-  flex: 1;
+  display: grid;
+  align-items: stretch;
+  justify-items: stretch;
+  gap: 1rem;
+}
+@media (width >= 1250px) {
+  body > div > div.btm {
+    grid-template-columns: 300px 450px 1fr;
+    grid-template-rows: auto;
+  }
+}
+@media (width < 1250px) {
+  body > div > div.btm {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
 }
 
 body > div > div.btm > div {
@@ -72,30 +84,64 @@ body > div > div.btm > div {
   /* border-left: 1px solid var(--bg2); */
 }
 
-body > div > div.btm > div:is(.left, .mid) {
-  border-right: 1px solid var(--bg2);
-  color: var(--fg3);
+@media (width >= 1250px) {
+  body > div > div.btm > div:is(.left, .mid) {
+    border-right: 1px solid var(--bg2);
+    color: var(--fg3);
+  }
 }
-body > div > div.btm > div.left {
-  width: 300px;
+@media (width < 1250px) {
+  body > div > div.btm > div.left {
+    border-right: 1px solid var(--bg2);
+    color: var(--fg3);
+  }
+  body > div > div.btm > div.mid {
+    border-left: 1px solid var(--bg2);
+    color: var(--fg3);
+  }
+}
+@media (width >= 1250px) {
+  body > div > div.btm > div.left {
+    grid-column: 1;
+    width: 300px;
+  }
+}
+@media (width < 1250px) {
+  body > div > div.btm > div.left {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    width: 300px;
+  }
 }
 
-body > div > div.btm > div.mid {
-  width: 450px;
+@media (width >= 1250px) {
+  body > div > div.btm > div.mid {
+    grid-column: 2;
+    width: 450px;
+  }
+}
+@media (width < 1250px) {
+  body > div > div.btm > div.mid {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    width: 450px;
+  }
 }
 
 /* "(click to expand)" */
-body > div > div.btm > div:is(.left, .mid) details summary span::after {
+body > div > div.btm > div:is(.left, .mid) details > summary > div > span:is(:first-child)::after {
   content: " click to expand";
   color: var(--bg2);
   font-size: 0.8em;
 }
-body > div > div.btm > div:is(.left, .mid) details:open summary span::after {
+body > div > div.btm > div:is(.left, .mid) details:open > summary > div > span:is(:first-child)::after {
   content: " click to fold";
   color: var(--bg2);
   font-size: 0.8em;
 }
-body > div > div.btm > div:is(.left, .mid) details summary span:hover::after {
+body > div > div.btm > div:is(.left, .mid) details > summary > div > span:is(:first-child):hover::after {
   cursor: pointer;
 }
 
@@ -103,7 +149,31 @@ body > div > div.btm > div.mid > div > div {
   grid-area: 1 / 1;
 }
 
-body > div > div.btm > div.right {
-  margin-left: 1rem;
-  flex: 1;
+/* body > div > div.btm > div.mid .entry {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+} */
+/* currently unused since summaries are tooltips as title="" */
+.item-summary {
+  font-size: 0.7em;
+}
+.item-summary > p {
+  color: var(--fg3);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+@media (width >= 1250px) {
+  body > div > div.btm > div.right {
+    grid-column: 3;
+  }
+}
+@media (width < 1250px) {
+  body > div > div.btm > div.right {
+    border-top: 1px solid var(--bg2);
+    grid-column: 1 / 3;
+    grid-row: 2;
+  }
 }

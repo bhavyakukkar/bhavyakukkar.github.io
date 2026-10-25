@@ -60,15 +60,19 @@ function renderDataOfCategories(
     });
 
   return <details open={collapsed ? undefined : null}>
-    <summary><span>{
+    <summary>{
       maybe_category ? (
-        <a href={show(path)}>
-          {last(path)}
-        </a>
+        <div>
+          <span><a href={show(path)} title={maybe_category.inner.summary}>
+            {last(path)}
+          </a></span>
+        </div>
       ) : (
-        new HTMLText(last(path))
+        <div>
+          <span>{new HTMLText(last(path))}</span>
+        </div>
       )
-    }</span></summary>
+    }</summary>
 
     <ul>{ children }</ul>
   </details>;
@@ -81,9 +85,9 @@ function renderDataOfEntries(
   collapsed: boolean,
   storeEntry: (sc: HTMLNode, path: Path) => void,
 ) {
-  const maybe_category = category_of_data(d);
-  if (maybe_category) {
-    storeEntry(renderEntry(maybe_category), path);
+  const maybe_entry = category_of_data(d);
+  if (maybe_entry) {
+    storeEntry(renderEntry(maybe_entry), path);
   }
 
   const children = Object.entries(children_of_data(d))
@@ -93,13 +97,15 @@ function renderDataOfEntries(
       if (v instanceof Entry) {
         storeEntry(renderEntry(v), new_path);
         return <li>
-          <a href={show([
-            ...category_path,
-            ":",
-            ...with_last(new_path, last(new_path) + ".html"),
-          ])}>
-            { k }
-          </a>
+          <div>
+            <span><a title={v.inner.summary} href={show([
+              ...category_path,
+              ":",
+              ...with_last(new_path, last(new_path) + ".html"),
+            ])}>
+              { k }
+            </a></span>
+          </div>
         </li>;
       } else {
         return <li>{renderDataOfEntries(v.$, category_path, new_path, !!v.collapsed, storeEntry)}</li>;
@@ -107,19 +113,23 @@ function renderDataOfEntries(
     });
 
   return <details open={collapsed ? undefined : null}>
-    <summary><span>{
-      maybe_category ? (
-        <a href={show([
-          ...category_path,
-          ":",
-          ...with_last(path, last(path) + ".html"),
-        ])}>
-          {last(path)}
-        </a>
+    <summary>{
+      maybe_entry ? (
+        <div>
+          <span><a title={maybe_entry.inner.summary} href={show([
+            ...category_path,
+            ":",
+            ...with_last(path, last(path) + ".html"),
+          ])}>
+            {last(path)}
+          </a></span>
+        </div>
       ) : (
-        new HTMLText(last(path))
+        <div>
+          <span>{new HTMLText(last(path))}</span>
+        </div>
       )
-    }</span></summary>
+    }</summary>
 
     <ul>{ children }</ul>
   </details>;
@@ -154,11 +164,13 @@ function renderRootData(rd: RootData): Site {
 function renderCategory(c: Category, path: Path): SiteCategory {
   const entries = new Map();
 
-  const children = Object.entries(c.inner)
+  const children = Object.entries(c.inner.$ || {})
     .map(([k, v]) => {
       if (v instanceof Entry) {
         entries.set([k], renderEntry(v));
-        return <li><a href={show([...path, ":", k + ".html"])}>{k}</a></li>;
+        return <li><div>
+          <span><a title={v.inner.summary} href={show([...path, ":", k + ".html"])}>{k}</a></span>
+        </div></li>;
       } else {
         return <li>{renderDataOfEntries(
           v.$,
@@ -175,7 +187,6 @@ function renderCategory(c: Category, path: Path): SiteCategory {
 
 function renderEntry(c: Entry): HTMLNode {
   return <div>
-    {opt(!!c.inner.summary && <p>{ c.inner.summary }</p>)}
     {c.inner.content instanceof HTMLFile
       ? new HTMLNode(readFile(c.inner.content.inner, {encoding: 'ascii'}))
       : c.inner.content}
@@ -188,10 +199,16 @@ type TemplateInputs = {
   entry: HTMLChild,
 };
 
+type SiteConfig = {
+  no_entry_selected_content?: HTMLChild,
+  no_category_selected_content?: HTMLChild,
+};
+
 function writeSite(
   site: Site,
   out_dir: string,
   template_factory: () => Template<TemplateInputs>,
+  config: SiteConfig = {},
 ) {
   const root_html = html_node(site.root.tag, site.root.args, site.root.body);
 
@@ -199,8 +216,8 @@ function writeSite(
   writeFile(path.join(out_dir, "index.html"), write => {
     template_factory().run({
       categories: root_html,
-      entries: <p>No category selected</p>,
-      entry: <p>No entry selected</p>,
+      entries: config.no_category_selected_content ?? <p>No category selected</p>,
+      entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
     })(write);
   });
 
@@ -211,7 +228,7 @@ function writeSite(
       template_factory().run({
         categories: root_html,
         entries: category,
-        entry: <p>No entry selected</p>,
+        entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
       })(write);
     });
 
@@ -255,6 +272,9 @@ writeSite(
   site,
   out_dir,
   () => new Template<TemplateInputs>(readFile(input_filename)),
+  {
+    no_category_selected_content: <p style="padding-left: 1em;">No category selected</p>
+  }
 );
 
 /* const t = new Template(readFile(input_filename));

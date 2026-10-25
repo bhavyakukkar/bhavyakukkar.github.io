@@ -1,5 +1,5 @@
-import { close, mkdirSync, open, openSync, readFileSync, ReadFileSyncOptionsWithStringEncoding, writeFileSync } from "node:fs";
-import { write_attrib, HTMLAttrib, HTMLChild, HTMLNode, HTMLText, html_node } from "./jsx";
+import { close, mkdirSync, openSync, readFileSync, ReadFileSyncOptionsWithStringEncoding, writeFileSync } from "node:fs";
+import { HTMLChild } from "./jsx";
 import path from "node:path";
 
 export type Update<T> = (old: T) => T;
@@ -13,10 +13,13 @@ export class Struct<T> {
 
 export class HTMLFile extends Struct<string> { }
 
-export class Category extends Struct<RootData<Entry>> { }
-export class Entry extends Struct<{
+export class Category extends Struct<{
+  $?: RootData<Entry>,
   summary?: string,
+}> { }
+export class Entry extends Struct<{
   content: HTMLFile | HTMLChild,
+  summary?: string,
 }> { }
 
 export type FoldOpts = {collapsed?: boolean};
@@ -49,7 +52,7 @@ export const flatten1 = (
   ]
 ): [string, Entry][] => v instanceof Entry
     ? [[k, v]]
-    : Object.entries(v instanceof Category ? v.inner : Array.isArray(v.$) ? v.$[1] : v.$)
+    : Object.entries(v instanceof Category ? (v.inner.$ || {}) : Array.isArray(v.$) ? v.$[1] : v.$)
       .flatMap(flatten1);
 
 // TODO HERE:
