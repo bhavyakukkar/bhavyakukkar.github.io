@@ -39,7 +39,7 @@ const code: Data<Category> = {
 const all_code_lang_entries =
   new Category({
     $: Object.fromEntries(Object.entries(code).flatMap(flatten1)),
-    summary: "(^ projects from all langs)",
+    summary: "projects from all langs",
   });
 
 // MUSIC

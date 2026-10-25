@@ -63,13 +63,9 @@ function renderDataOfCategories(
     <summary>{
       maybe_category ? (
         <div>
-          <span><a href={show(path)}>
+          <span><a href={show(path)} title={maybe_category.inner.summary}>
             {last(path)}
           </a></span>
-
-          <span class="item-summary">
-            {opt(!!maybe_category.inner.summary && <p>{ maybe_category.inner.summary }</p>)}
-          </span>
         </div>
       ) : (
         <div>
@@ -101,15 +97,14 @@ function renderDataOfEntries(
       if (v instanceof Entry) {
         storeEntry(renderEntry(v), new_path);
         return <li>
-          <div class="entry">
-            <span><a href={show([
+          <div>
+            <span><a title={v.inner.summary} href={show([
               ...category_path,
               ":",
               ...with_last(new_path, last(new_path) + ".html"),
             ])}>
               { k }
             </a></span>
-            <span>{opt(!!v.inner.summary && <p>{ v.inner.summary }</p>)}</span>
           </div>
         </li>;
       } else {
@@ -121,17 +116,13 @@ function renderDataOfEntries(
     <summary>{
       maybe_entry ? (
         <div>
-          <span><a href={show([
+          <span><a title={maybe_entry.inner.summary} href={show([
             ...category_path,
             ":",
             ...with_last(path, last(path) + ".html"),
           ])}>
             {last(path)}
           </a></span>
-
-          <span class="item-summary">
-            {opt(!!maybe_entry.inner.summary && <p>{ maybe_entry.inner.summary }</p>)}
-          </span>
         </div>
       ) : (
         <div>
@@ -177,9 +168,8 @@ function renderCategory(c: Category, path: Path): SiteCategory {
     .map(([k, v]) => {
       if (v instanceof Entry) {
         entries.set([k], renderEntry(v));
-        return <li><div class="entry">
-          <span><a href={show([...path, ":", k + ".html"])}>{k}</a></span>
-          <span>{opt(!!v.inner.summary && <p>{ v.inner.summary }</p>)}</span>
+        return <li><div>
+          <span><a title={v.inner.summary} href={show([...path, ":", k + ".html"])}>{k}</a></span>
         </div></li>;
       } else {
         return <li>{renderDataOfEntries(
