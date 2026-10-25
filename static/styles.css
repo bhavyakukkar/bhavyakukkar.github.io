@@ -177,7 +177,7 @@ body > div > div.btm > div.mid > div > div {
 
 body > div > div.btm > div.right {
   width: auto;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 @media (width >= 1250px) {
   body > div > div.btm > div.right {
