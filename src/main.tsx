@@ -1,7 +1,7 @@
 import { env, argv } from "node:process";
-import data from "./data";
-import { Category, category_of_data, children_of_data, Data, Entry, FoldOpts, HTMLFile, opt, readFile, RootData, Update, writeFile } from "./lib";
-import { InterpolatedPart, Template } from "./template";
+import { data, links } from "./data";
+import { Category, category_of_data, children_of_data, Data, entries, Entry, HTMLFile, readFile, RootData, writeFile } from "./lib";
+import { iter as template_iter, new_template, type template, is_interpolated_part } from "./template";
 import { jsx, HTMLNode, HTMLText, HTMLChild, HTMLAttrib, html_node } from "./jsx";
 import path from "node:path";
 
@@ -29,12 +29,6 @@ type Site = {
   root: HTMLNodeRepr,
   categories: Map<Path, SiteCategory>,
 }
-
-// const rootHtml: HTMLNodeRepr = { tag: "ul", args: [], body: [] };
-// const categoryHtml: Map<Path, HTMLNode> = new Map();
-// // const categoryHtml: HTMLNodeRepr = { tag: "div", args: [], body: [] };
-// const entryHtml: Map<Path, HTMLNodeRepr> = new Map();
-// const entryHtml: HTMLNodeRepr = { tag: "div", args: [], body: [] };
 
 function renderDataOfCategories(
   d: Data,
@@ -193,11 +187,10 @@ function renderEntry(c: Entry): HTMLNode {
   </div>;
 }
 
-type TemplateInputs = {
-  categories: HTMLChild,
-  entries: HTMLChild,
-  entry: HTMLChild,
-};
+type TemplateInputs =
+  | 'categories'
+  | 'entries'
+  | 'entry';
 
 type SiteConfig = {
   no_entry_selected_content?: HTMLChild,
@@ -206,30 +199,25 @@ type SiteConfig = {
 
 function writeSite(
   site: Site,
-  out_dir: string,
-  template_factory: () => Template<TemplateInputs>,
+  write_file: (path: string, contents: Record<TemplateInputs, HTMLChild>) => void,
   config: SiteConfig = {},
 ) {
   const root_html = html_node(site.root.tag, site.root.args, site.root.body);
 
   // landing page with categories listed but no entries or view of an entry
-  writeFile(path.join(out_dir, "index.html"), write => {
-    template_factory().run({
-      categories: root_html,
-      entries: config.no_category_selected_content ?? <p>No category selected</p>,
-      entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
-    })(write);
+  write_file("index.html", {
+    categories: root_html,
+    entries: config.no_category_selected_content ?? <p>No category selected</p>,
+    entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
   });
 
   // intermediate pages with categories listed and entries listed for the respective category
   for (const [category_path, { html: category, entries }] of site.categories) {
-    console.log("entries: ", path.join(out_dir, ...category_path, "index.html"));
-    writeFile(path.join(out_dir, ...category_path, "index.html"), write => {
-      template_factory().run({
-        categories: root_html,
-        entries: category,
-        entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
-      })(write);
+    console.log("entries: ", path.join(...category_path, "index.html"));
+    write_file(path.join(...category_path, "index.html"), {
+      categories: root_html,
+      entries: category,
+      entry: config.no_entry_selected_content ?? <p>No entry selected</p>,
     });
 
     // leaf pages with categories listed, entries listed and a respective entry open
@@ -238,23 +226,18 @@ function writeSite(
       entry_filepath[entry_filepath.length - 1] = last(entry_filepath) + ".html";
 
       console.log("entry: ", path.join(
-        out_dir,
         ...category_path,
         ":",
         ...with_last(entry_path, last(entry_path) + ".html"),
       ));
-      writeFile(path.join(out_dir, ...category_path, ":", ...entry_filepath), write => {
-        template_factory().run({
-          categories: root_html,
-          entries: category,
-          entry: entry,
-        })(write);
+      write_file(path.join(...category_path, ":", ...entry_filepath), {
+        categories: root_html,
+        entries: category,
+        entry: entry,
       });
     }
   }
 }
-
-// const interpolatedParts = [rootHtml, categoryHtml, entryHtml];
 
 const input_filename = argv[2] || env.IN;
 if (input_filename === undefined) {
@@ -270,30 +253,28 @@ const site = renderRootData(data);
 
 writeSite(
   site,
-  out_dir,
-  () => new Template<TemplateInputs>(readFile(input_filename)),
+
+  (file_path, map_part) => {
+    writeFile(path.join(out_dir, file_path), write => {
+      for (const part of template_iter(
+        new_template<TemplateInputs | 'links'>(readFile(input_filename))
+      )) {
+        if (is_interpolated_part(part)) {
+          if (part.inner === 'links') {
+            write((<span>
+              {entries(links).map(([name, link]) => <a href={link}>{name}</a>)}
+            </span>).content);
+          } else {
+            write(map_part[part.inner].content);
+          }
+        } else {
+          write(part);
+        }
+      }
+    });
+  },
+
   {
     no_category_selected_content: <p style="padding-left: 1em;">No category selected</p>
   }
 );
-
-/* const t = new Template(readFile(input_filename));
-let i = 1;
-writeFile(
-  output_filename,
-  write => {
-    while (true) {
-      const part = t.next();
-      if (part instanceof InterpolatedPart) {
-        if (parseInt(part.inner) != i) throw new Error("template invariant broken");
-        const { tag, args, body } = interpolatedParts[i - 1]!;
-        write(html_node(tag, args, body).content);
-        i++;
-      } else if (part === null) {
-        break;
-      } else {
-        write(part);
-      }
-    }
-  }
-); */

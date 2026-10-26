@@ -94,7 +94,7 @@ code/rust/json.html
 
 */
 
-const data = {
+export const data = {
   code: { collapsed: false, $: [all_code_lang_entries, code] },
 
   games: new Category({
@@ -161,4 +161,10 @@ const data = {
   blog: new Category({}),
 } satisfies RootData;
 
-export default data;
+export const links = {
+  'github': "https://github.com/bhavyakukkar",
+  'itch': "https://nigelwithrow.itch.io",
+  'bandcamp/heather': "https://heatherknife.bandcamp.com",
+  'bandcamp/melodemon': "https://melodemon.bandcamp.com",
+};
+

@@ -61,6 +61,15 @@ body > div > div.top {
   padding: 1rem;
 }
 
+/* socials/links */
+body > div > div.mid > span {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 body > div > div.btm {
   width: auto;
   border: 1px solid var(--bg2);
