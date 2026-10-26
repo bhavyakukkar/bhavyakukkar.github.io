@@ -166,5 +166,7 @@ export const links = {
   'itch': "https://nigelwithrow.itch.io",
   'bandcamp/heather': "https://heatherknife.bandcamp.com",
   'bandcamp/melodemon': "https://melodemon.bandcamp.com",
+  'github/nigelwithrow': "https://github.com/nigelwithrow",
+  'twitch': "https://www.twitch.tv/nigelwithrow",
 };
 
