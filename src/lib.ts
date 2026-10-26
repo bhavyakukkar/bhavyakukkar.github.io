@@ -76,3 +76,7 @@ export function writeFile(filename: string, f: (write: (s: string) => void) => v
   close(fd);
 }
 
+export function entries<K extends string, T>(o: { [s in K]?: T | undefined; }): [K, T][] {
+  return Object.entries(o).filter(([_, v]) => v !== undefined) as any;
+}
+
